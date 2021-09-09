@@ -8,7 +8,9 @@ public class ATMMachineConstants {
 	
 	public static final String ATMMACHINE_GET_BALANCE_ENQUIRY_ENDPOINT = "/balanceEnquiry";
 	
-	public static final String ATMMACHINE_POST_CASH_WITHDRAWAL_ENDPOINT = "/withdrawMoney";
+	public static final String ATMMACHINE_FIND_CUSTOMER_ENDPOINT = "/findCustomer";
+	
+	public static final String ATMMACHINE_UPDATE_CUSTOMER_BALANCE_ENDPOINT = "/updateCustomerBalance";
 	
 	public static enum ATMMachineErrorKeys {
 

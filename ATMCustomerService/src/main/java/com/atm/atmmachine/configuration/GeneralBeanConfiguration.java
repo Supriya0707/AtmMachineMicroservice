@@ -4,14 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.atm.atmmachine.controller.ControllerHelper;
-import com.atm.atmmachine.dao.ATMMachineDao;
-import com.atm.atmmachine.dao.ATMMachineDaoImpl;
 import com.atm.atmmachine.dao.CustomerAccountDao;
 import com.atm.atmmachine.dao.CustomerAccountDaoImpl;
 import com.atm.atmmachine.environment.ApplicationData;
 import com.atm.atmmachine.helper.ErrorMessageProvider;
-import com.atm.atmmachine.manager.WithdrawRequestManager;
-import com.atm.atmmachine.service.WithdrawService;
+import com.atm.atmmachine.manager.ATMMachineRequestManager;
+import com.atm.atmmachine.service.CustomerService;
 import com.atm.atmmachine.validator.Validator;
 
 @Configuration
@@ -21,20 +19,16 @@ public class GeneralBeanConfiguration {
 	public ApplicationData applicationData() {
 		return new ApplicationData();
 	}
-
-	@Bean
-	public WithdrawService postATMMachineService() {
-		return new WithdrawService();
-	}
 	
 	@Bean
-	public WithdrawRequestManager atmMachineRequestManager() {
-		return new WithdrawRequestManager();
+	public CustomerService getATMMachineService() {
+		return new CustomerService();
 	}
 	
+	
 	@Bean
-	public ATMMachineDao atmMachineDao() {
-		return new ATMMachineDaoImpl();
+	public ATMMachineRequestManager atmMachineRequestManager() {
+		return new ATMMachineRequestManager();
 	}
 	
 	@Bean

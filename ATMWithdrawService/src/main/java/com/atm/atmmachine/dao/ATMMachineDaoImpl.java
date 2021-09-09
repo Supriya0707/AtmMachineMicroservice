@@ -9,30 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.atm.atmmachine.environment.ApplicationData;
 import com.atm.atmmachine.model.Denomination;
-import com.atm.atmmachine.model.Withdrawal;
 
 public class ATMMachineDaoImpl implements ATMMachineDao {
 
-private ApplicationData applicationData;
-	
-	public ApplicationData getApplicationData() {
-		return applicationData;
-	}
-
 	@Autowired
-	public void setApplicationData(ApplicationData applicationData) {
-		this.applicationData = applicationData;
-	}
-
+	private ApplicationData applicationData;
+	
 	@Override
 	public long fethcATMBalance() {
-		return getApplicationData().getAtmMachine().getBalanceMoney();
+		return applicationData.getBalanceMoney();
 	}
 
 	@Override
 	public boolean validateWithdrawalAmount(int amount) {
 		boolean isAmountValid = false;
-		int lowestNoteValue = getApplicationData().getAtmMachine().getDenominationAll().last().getNoteValue();
+		int lowestNoteValue = ApplicationData.getDenominationAll().last().getNoteValue();
 		if (amount > 0 && ((amount % lowestNoteValue) == 0)) {
 			return true;
 		} 
@@ -46,27 +37,15 @@ private ApplicationData applicationData;
 		return calculateWithAllDenomination(amount, denominationResult);
 	}
 
-	@Override
-	public List<Withdrawal> fethcAllWithdrawals() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void updateWithdrawals(String accountNumber, int amount) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	private List<Denomination> calculateWithAllDenomination(int amount, List<Denomination> denominationResult) {
 		
 		int remainingAmt = 0;
-		
-		TreeSet<Denomination> denominationAll = getApplicationData().getAtmMachine().getDenominationAll();
-		Iterator<Denomination> iterator = denominationAll.iterator();
+		// Get All available notes and its Count in ATM Machine
+		TreeSet<Denomination> denominationAll = ApplicationData.getDenominationAll();
 		
 		Denomination updatedDenomination = null;	// here new quantity will be updated, after calculation
 		
+		Iterator<Denomination> iterator = denominationAll.iterator();
 		while (iterator.hasNext()) {
 			Denomination currentDenomination = iterator.next();
 			updatedDenomination = currentDenomination;
@@ -78,9 +57,9 @@ private ApplicationData applicationData;
 		
 		// Update repository
 		denominationAll.add(updatedDenomination);
-		getApplicationData().getAtmMachine().setDenominationAll(denominationAll);
+		applicationData.setDenominationAll(denominationAll);
 		
-		// recursion
+		// recursion for remainingAmt with updated Denomination
 		if (remainingAmt > 0) {
 			calculateWithAllDenomination(remainingAmt, denominationResult);	
 		}

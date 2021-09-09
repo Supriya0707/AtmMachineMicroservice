@@ -7,31 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.atm.atmmachine.constants.ATMMachineConstants.ATMMachineErrorKeys;
 import com.atm.atmmachine.environment.ApplicationData;
 import com.atm.atmmachine.exception.ValidationException;
-import com.atm.atmmachine.manager.CustomerServiceProxy;
 import com.atm.atmmachine.model.Customer;
-
 
 public class CustomerAccountDaoImpl implements CustomerAccountDao {
 
-	@Autowired
-	private CustomerServiceProxy proxy;
-	
 	@Override
 	public boolean validateCustomer(String accountNumber, int pin) {
 		return findCustomer(accountNumber).getPin()==pin;
 	}
 
 	@Override
-	public long fetchCustomerBalance(String accountNumber, int pin) {
+	public long fetchCustomerBalance(String accountNumber) {
 		
 		return findCustomer(accountNumber).getBalance();
 	}
 
 	@Override
 	public void updateCustomerBalance(String accountNumber, long customerBalanceNew) {
-		Customer customer =findCustomer(accountNumber);
-		
-		proxy.updateCustomerBalance(customer.getAccountNumber(), customer.getPin(), customerBalanceNew);
+		findCustomer(accountNumber).setBalance(customerBalanceNew);
 	}
 	
 	private Customer findCustomer(String accountNumber) {
@@ -39,13 +32,11 @@ public class CustomerAccountDaoImpl implements CustomerAccountDao {
 		Customer customerToBeUpdated = new Customer();
 		customerToBeUpdated.setAccountNumber(accountNumber);
 
-		Optional<Customer> customer= Optional.of(proxy.findCustomer(accountNumber));
-		
+		Optional<Customer> customer= ApplicationData.getCustomerAll().stream().
+		filter(c -> c.equals(customerToBeUpdated)).findFirst();
 		 if(customer.isPresent()) 
 			return customer.get();
 		else
 			throw new ValidationException(ATMMachineErrorKeys.BAD_REQUEST.getErrorKey());
-     }
-	
-	
+		}
 }
